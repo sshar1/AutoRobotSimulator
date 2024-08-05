@@ -4,14 +4,12 @@ using UnityEngine;
 
 public class Climber : MonoBehaviour {
 
-    [SerializeField] private Transform climber;
-
     private const string CLIMBER_UP = "ClimberUp";
 
     private Animator animator;
 
     private void Awake() {
-        animator = climber.GetComponent<Animator>();
+        animator = GetComponent<Animator>();
     }
 
     private void Update() {

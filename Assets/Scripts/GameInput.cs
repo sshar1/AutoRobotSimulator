@@ -11,8 +11,6 @@ public class GameInput : MonoBehaviour {
 
     private PlayerInputActions playerInputActions;
 
-    private bool climberButtonPreviouslyPressed;
-
     private void Awake() {
         Instance = this;
 
@@ -58,15 +56,11 @@ public class GameInput : MonoBehaviour {
         return playerInputActions.Player.Intake.IsPressed();
     }
 
-    public bool ClimberPressedThisFrame() {
-        return playerInputActions.Player.ClimbExtend.triggered && playerInputActions.Player.ClimbExtend.ReadValue<float>() > 0f;
+    public bool ShootPressed() {
+        return playerInputActions.Player.Shoot.IsPressed();
     }
 
-    private void Update() {
-        if (playerInputActions.Player.ClimbExtend.IsPressed()) {
-            climberButtonPreviouslyPressed = true;
-        } else {
-            climberButtonPreviouslyPressed = false;
-        }
+    public bool ClimberPressedThisFrame() {
+        return playerInputActions.Player.ClimbExtend.triggered && playerInputActions.Player.ClimbExtend.ReadValue<float>() > 0f;
     }
 }

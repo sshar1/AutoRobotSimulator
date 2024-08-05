@@ -6,12 +6,16 @@ using UnityEngine;
 
 public class Drivetrain : MonoBehaviour {
     
-    private const float MAX_LINEAR_VELOCITY = 8f;
-    private const float MAX_ANGULAR_VELOCITY = 5f;
-    private const float MAX_LINEAR_ACCEL = 12f;
-    private const float BRAKE_LINEAR_ACCEL = 25f;
+    private const float MAX_LINEAR_VELOCITY = 12f; // 8
+    private const float MAX_ANGULAR_VELOCITY = 7f; // 6
+
+    private const float MAX_LINEAR_ACCEL = 16f; // 12
     private const float MAX_ANGULAR_ACCEL = 10f;
+
+    private const float BRAKE_LINEAR_ACCEL = 25f;
     private const float BRAKE_ANGULAR_ACCEL = 20f;
+
+    private const float MAX_LINEAR_VELOCITY_AT_MAX_ANGULAR_VELOCITY = 6f;
 
     private Rigidbody rigidBody;
 
@@ -44,7 +48,7 @@ public class Drivetrain : MonoBehaviour {
 
     // Change max tranlation speed based on current angular velocity
     private float GetMaxTranslationSpeed() {
-        return MAX_LINEAR_VELOCITY - (rigidBody.angularVelocity.y * 3 / MAX_ANGULAR_VELOCITY);
+        return MAX_LINEAR_VELOCITY - (rigidBody.angularVelocity.y * MAX_LINEAR_VELOCITY_AT_MAX_ANGULAR_VELOCITY / MAX_ANGULAR_VELOCITY);
     }
 
     private void FixedUpdate() {
