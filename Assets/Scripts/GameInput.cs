@@ -63,4 +63,12 @@ public class GameInput : MonoBehaviour {
     public bool ClimberPressedThisFrame() {
         return playerInputActions.Player.ClimbExtend.triggered && playerInputActions.Player.ClimbExtend.ReadValue<float>() > 0f;
     }
+
+    public bool EnabledAutonPressedThisFrame() {
+        return playerInputActions.Player.EnableAuton.triggered && playerInputActions.Player.EnableAuton.ReadValue<float>() > 0f;
+    }
+
+    public bool TestButtonPressedThisFrame() {
+        return playerInputActions.Player.TestingButton.triggered && playerInputActions.Player.TestingButton.ReadValue<float>() > 0f;
+    }
 }

@@ -5,6 +5,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 public class Drivetrain : MonoBehaviour {
+
+    [SerializeField] private AutonController autonController;
     
     private const float MAX_LINEAR_VELOCITY = 12f; // 8
     private const float MAX_ANGULAR_VELOCITY = 7f; // 6
@@ -52,6 +54,7 @@ public class Drivetrain : MonoBehaviour {
     }
 
     private void FixedUpdate() {
+        if (autonController.autonEnabled()) return;
 
         ChassisSpeeds requestedSpeeds = GetFieldRelativeChassiSpeeds();
         ChassisSpeeds currentSpeeds = new ChassisSpeeds(new Vector2(rigidBody.velocity.x, rigidBody.velocity.z), rigidBody.angularVelocity.y);

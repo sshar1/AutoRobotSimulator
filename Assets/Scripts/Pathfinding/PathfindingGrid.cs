@@ -212,6 +212,10 @@ public class Grid : MonoBehaviour {
                     Gizmos.color = Color.Lerp(Color.white, Color.black, Mathf.InverseLerp(penaltyMin, penaltyMax, node.movementPenalty));
 
                     Gizmos.color = node.traversable ? Gizmos.color : Color.red;
+
+                    if (node == GetComponent<Pathfinding>()._targetNode) {
+                        Gizmos.color = Color.cyan;
+                    }
                     // if (node == robotNode) {
                     //     Gizmos.color = Color.cyan;
                     // }

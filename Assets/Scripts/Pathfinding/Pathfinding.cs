@@ -8,7 +8,7 @@ using System;
 
 public class Pathfinding : MonoBehaviour {
 
-    public Transform seeker, target;
+    public Node _targetNode;
 
     Grid grid;
 
@@ -29,6 +29,8 @@ public class Pathfinding : MonoBehaviour {
         if (!targetNode.traversable) {
             targetNode = grid.GetClosestTraversableNode(targetNode);
         }
+
+        _targetNode = targetNode;
 
         Heap<Node> openSet = new Heap<Node>(grid.MaxSize);
         HashSet<Node> closedSet = new HashSet<Node>();
@@ -66,6 +68,8 @@ public class Pathfinding : MonoBehaviour {
         if (pathSuccess) {
             waypoints = RetracePath(startNode, targetNode);
             pathSuccess = waypoints.Length > 0;
+        } else {
+            print("error making path");
         }
         callback(new PathResult(waypoints, pathSuccess, request.callback));
     }

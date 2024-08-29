@@ -44,7 +44,7 @@ public class FieldMapManager : MonoBehaviour {
         foreach (KeyValuePair<Cargo, GameObject> pair in cargoNodes) {
             Vector3 cargoPosition = pair.Key.transform.position;
 
-            if (cargoPosition.y > 1f || pair.Key.GetComponent<Cargo>().IsInRobot()) {
+            if (!pair.Key.BelowHeightThreshold() || pair.Key.GetComponent<Cargo>().IsInRobot()) {
                 pair.Value.SetActive(false);
                 continue;
             } else {

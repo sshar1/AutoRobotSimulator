@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ public class Unit : MonoBehaviour {
     const float minPathUpdateTime = .1f;
     const float pathUpdateMoveThreshold = .3f;
 
-    public Transform target;
+    [SerializeField] private Transform target;
     public float speed = 10f;
     public float turnSpeed = 3;
     public float turnDst = 5;
@@ -17,8 +18,19 @@ public class Unit : MonoBehaviour {
 
     Path path;
 
-    void Start() {
-        StartCoroutine(UpdatePath());
+    // void Start() {
+    //     StartCoroutine("UpdatePath");
+    // }
+
+    public void TogglePathFollow(bool autonEnabled) {
+        if (autonEnabled) {
+            StartCoroutine("UpdatePath");
+            // StopCoroutine("FollowPath");
+            // StartCoroutine("FollowPath");
+        } else {
+            StopCoroutine("UpdatePath");
+            StopCoroutine("FollowPath");
+        }
     }
 
     public void OnPathFound(Vector3[] waypoints, bool pathSuccessful) {
@@ -81,7 +93,7 @@ public class Unit : MonoBehaviour {
                 }
 
                 if (pathIndex <= path.rotationGoalIndex && rotationGoalDst > 0) {
-                    Debug.Log(rotationPercent);
+                    // Debug.Log(rotationPercent);
                     rotationPercent = Mathf.Clamp01((transform.position - path.lookPoints[0]).magnitude / (path.lookPoints[path.rotationGoalIndex] - path.lookPoints[0]).magnitude);
                 }
 
@@ -96,13 +108,21 @@ public class Unit : MonoBehaviour {
                 Vector3 targetSpeed = (path.lookPoints[pathIndex] - transform.position).normalized * speed;
                 Vector3 newSpeed = Vector3.Lerp(GetComponent<Rigidbody>().velocity, targetSpeed, Time.deltaTime * turnSpeed);
                 GetComponent<Rigidbody>().velocity = newSpeed * speedPercent;
-                transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationPercent);
+                transform.rotation = targetRotation; //Quaternion.Lerp(transform.rotation, targetRotation, rotationPercent);
                 // transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
                 // transform.Translate(Vector3.forward * Time.deltaTime * speed * speedPercent, Space.Self);
             }
 
             yield return null;
         }
+    }
+
+    public void SetTarget(Transform target) {
+        this.target = target;
+    }
+
+    public Transform GetTarget() {
+        return target;
     }
 
     public void OnDrawGizmos() {

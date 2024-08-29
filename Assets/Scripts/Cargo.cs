@@ -1,8 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Cargo : MonoBehaviour {
+
+    const float HEIGHT_THRESHOLD = 1f;
 
     [SerializeField] private Color color;
 
@@ -15,16 +18,8 @@ public class Cargo : MonoBehaviour {
     private bool inRobotPosition = false; // If the piece is in its spot (top or bottom)
     private bool isSwitching = false;
 
-    // private Vector3 previousParentPosition;
-
-    // private Vector3 previousLocalPosition; // For lerping to local position
-    // private bool hadParentPreviousFrame; // for lerping to local position
-
     public void SetParentToRobot(Transform parent, bool switching) {
         transform.parent = parent.transform;
-        // GetComponent<SphereCollider>().excludeLayers = LayerMask.NameToLayer("Everything");
-        // GetComponent<SphereCollider>().includeLayers = LayerMask.NameToLayer("Cargo");
-        // transform.position = parent.position;
         GetComponent<SphereCollider>().enabled = false;
         GetComponent<Rigidbody>().velocity = Vector3.zero;
         GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
@@ -35,38 +30,11 @@ public class Cargo : MonoBehaviour {
     }
 
     public void LerpToLocalPosition(float dt, Vector3 deltaParentPosition) {
-        // Vector3 deltaLocalPosition = Vector3.zero;
-        // if (previousLocalPosition != Vector3.zero) {
-        //     // transform.localPosition = previousLocalPosition;
-        //     deltaLocalPosition = transform.localPosition - previousLocalPosition;
-        // }
-
-        // previousLocalPosition = transform.localPosition;
-
-        // Vector3 deltaParentPosition = Vector3.zero;
-        // if (GetParent() == null) {
-        //     deltaParentPosition = Vector3.zero;
-        //     previousParentPosition = Vector3.zero;
-        //     hadParentPreviousFrame = false;
-        // } else {
-        //     if (hadParentPreviousFrame && !isSwitching) {
-        //         deltaParentPosition = GetParent().position - previousParentPosition;
-        //     }
-        //     // if (previousParentPosition == Vector3.zero) {
-        //     //     deltaParentPosition = Vector3.zero;
-        //     // } else {
-        //     //     deltaParentPosition = GetParent().position - previousParentPosition;
-        //     // }
-        //     previousParentPosition = GetParent().position;
-        //     hadParentPreviousFrame = true;
-        // }
-
         transform.position += deltaParentPosition;
         transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, Mathf.Clamp01(dt * 5));// + deltaParentPosition;
 
         if (transform.localPosition.magnitude < 0.05f) {
             transform.localPosition = Vector3.zero;
-            // previousLocalPosition = Vector3.zero;
             inRobotPosition = true;
             isSwitching = false;
         }
@@ -74,11 +42,31 @@ public class Cargo : MonoBehaviour {
 
     public void SetParentToWorldScene() {
         transform.parent = null;
-        // hadParentPreviousFrame = false;
 
         isInRobot = false;
         inRobotPosition = false;
         isSwitching = false;
+    }
+
+    public CargoNeighbor GetClosestNeighbor(List<Cargo> cargos) {
+        float minDistance = Mathf.Infinity;
+        Cargo closestCargo = null;
+
+        foreach (Cargo cargo in cargos) {
+            if (ReferenceEquals(cargo, this)) continue;
+
+            float distance = (this.transform.position - cargo.transform.position).sqrMagnitude;
+            if (distance < minDistance) {
+                closestCargo = cargo;
+                minDistance = distance;
+            }
+        }
+
+        return new CargoNeighbor(closestCargo, Mathf.Sqrt(minDistance));
+    }
+
+    public bool BelowHeightThreshold() {
+        return transform.position.y < HEIGHT_THRESHOLD;
     }
 
     public Transform GetParent() {
@@ -100,5 +88,15 @@ public class Cargo : MonoBehaviour {
 
     public Color GetColor() {
         return color;
+    }
+
+    public struct CargoNeighbor {
+        public Cargo cargo;
+        public float distance;
+
+        public CargoNeighbor(Cargo cargo, float distance) {
+            this.cargo = cargo;
+            this.distance = distance;
+        }
     }
 }
